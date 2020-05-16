@@ -105,11 +105,12 @@ public final class CustomSingleSignOutFilter extends AbstractConfigurationFilter
         if (HANDLER.process(request, response)) {
             filterChain.doFilter(servletRequest, servletResponse);
         } else {
+            // 退出请求当前未登录或者已经退出重定向到系统首页
             String redirectUrl = this.clientHomePageUrl;
-
             // by developer lemon
             if(StringUtils.isBlank(redirectUrl)) {
-                redirectUrl = String.format("%s://%s:%s%s", request.getScheme(), request.getServerName(), request.getServerPort(), request.getContextPath());            }
+                redirectUrl = String.format("%s://%s:%s%s", request.getScheme(), request.getServerName(), request.getServerPort(), request.getContextPath());
+            }
 
             if(log.isDebugEnabled()) {
                 log.debug("clientHomePageUrl is {}, redirectUrl is {}", this.clientHomePageUrl, redirectUrl);
