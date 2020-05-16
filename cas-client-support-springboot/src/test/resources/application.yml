@@ -1,0 +1,36 @@
+# 项目端口
+server:
+  port: 8088
+# 填CAS服务器的前缀
+cas:
+  # Ticket校验器使用Cas30ProxyReceivingTicketValidationFilter
+  validation-type: cas
+  ignore-pattern: /template***
+  # 默认是 REGEX，可以指定UrlPatternMatcherStrategy实现类
+  ignore-url-pattern-type: org.jasig.cas.client.boot.authentication.MultiPatternUrlPatternMatcherStrategy
+  custom-single-logout-enabled: true
+  single-logout:
+    enabled: false
+  server-url-prefix: http://dev.longhu.net:8080/cas
+  # 填CAS服务器的登录地址
+  server-login-url: ${cas.server-url-prefix}/login
+  # 填客户端的访问前缀 dev.longhu.net 是在host文件中配置的映射,映射到127:.0.0.1
+  client-host-url: http://dev.longhu.net:8088
+  client-home-page-url: ${cas.client-host-url}
+  use-session: true
+#  logout-filter-url-patterns: /**
+  logout-parameter-name: logoutRequest
+  # 自定义的退出url，退出成功后跳转到 http://dev.longhu.net:8088/cas/logout?service=http://dev.longhu.net:8088/logout/success
+  logout-callback-path: /logout/success
+#  authentication-redirect-strategy-class: org.jasig.cas.client.boot.authentication.AjaxAuthenticationRedirectStrategy
+  ajaxFilter:
+    redirectUrlPlaceHolder: ${redirectUrl}
+    responseStatus: 200
+    responseContentType: application/json
+    responseContent: '{"code":${cas.ajaxFilter.responseStatus}, "message":"用户未登录", "redirectUrl":"${redirectUrl}"}'
+    parameterName: ajax
+
+logging:
+  level:
+    com.lemon: debug
+    org.jasig.cas: debug

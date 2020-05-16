@@ -1,35 +1,15 @@
-/**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-package org.jasig.cas.client.authentication;
+package org.jasig.cas.client.boot.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jasig.cas.client.Protocol;
+import org.jasig.cas.client.authentication.*;
 import org.jasig.cas.client.configuration.ConfigurationKeys;
 import org.jasig.cas.client.util.AbstractCasFilter;
 import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.util.ReflectUtils;
 import org.jasig.cas.client.validation.Assertion;
 
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -38,24 +18,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Filter implementation to intercept all requests and attempt to authenticate
- * the user by redirecting them to CAS (unless the user has a ticket).
- * <p>
- * This filter allows you to specify the following parameters (at either the context-level or the filter-level):
- * <ul>
- * <li><code>casServerLoginUrl</code> - the url to log into CAS, i.e. https://cas.rutgers.edu/login</li>
- * <li><code>renew</code> - true/false on whether to use renew or not.</li>
- * <li><code>gateway</code> - true/false on whether to use gateway or not.</li>
- * <li><code>method</code> - the method used by the CAS server to send the user back to the application (redirect or post).</li>
- * </ul>
- *
- * <p>Please see AbstractCasFilter for additional properties.</p>
- *
- * @author Scott Battaglia
- * @author Misagh Moayyed
- * @since 3.0
+ * @author lemon
+ * @description
+ * @date 2020-05-10 11:32
  */
-public class AuthenticationFilter extends AbstractCasFilter {
+@Slf4j
+public class CustomAuthenticationFilter extends AbstractCasFilter {
     /**
      * The URL to the CAS Server login.
      */
@@ -83,7 +51,7 @@ public class AuthenticationFilter extends AbstractCasFilter {
     private UrlPatternMatcherStrategy ignoreUrlPatternMatcherStrategyClass = null;
 
     private static final Map<String, Class<? extends UrlPatternMatcherStrategy>> PATTERN_MATCHER_TYPES =
-        new HashMap<String, Class<? extends UrlPatternMatcherStrategy>>();
+            new HashMap<String, Class<? extends UrlPatternMatcherStrategy>>();
 
     static {
         PATTERN_MATCHER_TYPES.put("CONTAINS", ContainsPatternUrlPatternMatcherStrategy.class);
@@ -92,11 +60,11 @@ public class AuthenticationFilter extends AbstractCasFilter {
         PATTERN_MATCHER_TYPES.put("EXACT", ExactUrlPatternMatcherStrategy.class);
     }
 
-    public AuthenticationFilter() {
+    public CustomAuthenticationFilter() {
         this(Protocol.CAS2);
     }
 
-    protected AuthenticationFilter(final Protocol protocol) {
+    protected CustomAuthenticationFilter(final Protocol protocol) {
         super(protocol);
     }
 
@@ -150,9 +118,9 @@ public class AuthenticationFilter extends AbstractCasFilter {
         }
 
         // by developer lemon
-        if (logger.isDebugEnabled()) {
-            logger.debug("忽略URL检测类{}", this.ignoreUrlPatternMatcherStrategyClass == null ? null : this.ignoreUrlPatternMatcherStrategyClass.getClass());
-            logger.debug("认证重定向类 {}", this.authenticationRedirectStrategy.getClass());
+        if (log.isDebugEnabled()) {
+            log.debug("忽略URL检测类{}", this.ignoreUrlPatternMatcherStrategyClass == null ? null : this.ignoreUrlPatternMatcherStrategyClass.getClass());
+            log.debug("认证重定向类 {}", this.authenticationRedirectStrategy.getClass());
         }
     }
 
@@ -161,15 +129,15 @@ public class AuthenticationFilter extends AbstractCasFilter {
         super.init();
 
         final String message = String.format(
-            "one of %s and %s must not be null.",
-            ConfigurationKeys.CAS_SERVER_LOGIN_URL.getName(),
-            ConfigurationKeys.CAS_SERVER_URL_PREFIX.getName());
+                "one of %s and %s must not be null.",
+                ConfigurationKeys.CAS_SERVER_LOGIN_URL.getName(),
+                ConfigurationKeys.CAS_SERVER_URL_PREFIX.getName());
 
         CommonUtils.assertNotNull(this.casServerLoginUrl, message);
 
         // by developer lemon
-        if (logger.isDebugEnabled()) {
-            logger.debug("初始化认证过滤器类 {}", AuthenticationFilter.class);
+        if (log.isDebugEnabled()) {
+            log.debug("初始化认证过滤器类 {}", CustomAuthenticationFilter.class);
         }
     }
 
@@ -217,7 +185,7 @@ public class AuthenticationFilter extends AbstractCasFilter {
         logger.debug("Constructed service url: {}", modifiedServiceUrl);
 
         final String urlToRedirectTo = CommonUtils.constructRedirectUrl(this.casServerLoginUrl,
-            getProtocol().getServiceParameterName(), modifiedServiceUrl, this.renew, this.gateway, this.method);
+                getProtocol().getServiceParameterName(), modifiedServiceUrl, this.renew, this.gateway, this.method);
 
         logger.debug("redirecting to \"{}\"", urlToRedirectTo);
         this.authenticationRedirectStrategy.redirect(request, response, urlToRedirectTo);
@@ -261,8 +229,19 @@ public class AuthenticationFilter extends AbstractCasFilter {
     }
 
     public final void setIgnoreUrlPatternMatcherStrategyClass(
-        final UrlPatternMatcherStrategy ignoreUrlPatternMatcherStrategyClass) {
+            final UrlPatternMatcherStrategy ignoreUrlPatternMatcherStrategyClass) {
         this.ignoreUrlPatternMatcherStrategyClass = ignoreUrlPatternMatcherStrategyClass;
     }
 
+    /**
+     * @param authenticationRedirectStrategy
+     * @return void
+     * @description by developer lemon
+     * @author lemon
+     * @date 2020-05-10 10:55
+     */
+    public final void setAuthenticationRedirectStrategy(
+            final AuthenticationRedirectStrategy authenticationRedirectStrategy) {
+        this.authenticationRedirectStrategy = authenticationRedirectStrategy;
+    }
 }

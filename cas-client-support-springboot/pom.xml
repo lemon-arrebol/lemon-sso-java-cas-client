@@ -18,41 +18,68 @@
     under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>org.jasig.cas.client</groupId>
         <version>3.6.2-SNAPSHOT</version>
         <artifactId>cas-client</artifactId>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>cas-client-support-springboot</artifactId>
-    <packaging>jar</packaging>
+
+
     <name>Jasig CAS Client for Java - Spring Boot Support</name>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>lemon-sso-cas-client-support-springboot</artifactId>
+    <packaging>jar</packaging>
+
     <description>Library providing annotation-based configuration support for CAS Java clients.
         Primarily designed for super easy CASification of Spring Boot apps.
     </description>
+
+    <properties>
+        <lombok.version>1.18.8</lombok.version>
+        <commons-lang.version>3.9</commons-lang.version>
+        <springboot.version>2.2.7.RELEASE</springboot.version>
+    </properties>
+
     <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.jasig.cas.client</groupId>
             <artifactId>cas-client-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.jasig.cas.client</groupId>
             <artifactId>cas-client-support-saml</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
             <version>${springboot.version}</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
@@ -75,14 +102,12 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>RELEASE</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <properties>
-        <springboot.version>2.2.7.RELEASE</springboot.version>
-    </properties>
 </project>

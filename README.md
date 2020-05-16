@@ -1,3 +1,5 @@
+CAS 未认证授权服务 不允许使用CAS来认证您访问的目标应用 https://blog.csdn.net/zhouzhiwengang/article/details/90052985
+CAS 5.3.1系列之使用cas overlay搭建服务端（一） https://www.cnblogs.com/mzq123/p/12801133.html
 # Java Apereo CAS Client [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas.client/cas-client-core/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas.client/cas-client)
 
 <a name="intro"></a>
